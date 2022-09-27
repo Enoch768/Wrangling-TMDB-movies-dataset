@@ -45,7 +45,6 @@ create table tmdb_movies(
     original_title varchar(1500),
     overview text,
     popularity numeric,
-    production_companies jsonb,
     production_countries jsonb,
     release_date date,
     revenue bigint,
@@ -65,6 +64,7 @@ df_movies['release_date'].fillna('2006-01-01', inplace=True)
 df_movies['release_date'] = pd.to_datetime(df_movies['release_date'])
 
 #insert values into the tables 
+total_row = 0
 for i in range(len(df_credits)):
     df = df_credits.iloc[i]
     movie_id = int(df['movie_id'])
@@ -98,8 +98,10 @@ for i in range(len(df_credits)):
                 crew = json.dumps([b+'}'])
                 crew = json.loads(crew)
         cur.execute(sql,(movie_id,title,json.dumps(cast),json.dumps(crew)))
+        total_row += 1
         conn.commit()
-print('Successfully Inserted data to tmdb credits table ')
+print(f'Inserted {total_row} into tmdb credits table')
+total_rows2 = 0
 for i in range(len(df_movies)):
     df2 = df_movies.iloc[i]
     budget = int(df2['budget'])
@@ -117,10 +119,6 @@ for i in range(len(df_movies)):
     original_title = df2['original_title']
     overview = df2['overview']
     popu = float(df2['popularity'])
-    p_c1 = df2['production_companies']
-    p_c1 = p_c1.replace('[','')
-    p_c1 = p_c1.replace('}','')
-    split_p_c1 = p_c1.split('},')
     p_c2 = df2['production_countries']
     p_c2 = p_c2.replace('[','')
     p_c2 = p_c2.replace(']','')
@@ -137,7 +135,7 @@ for i in range(len(df_movies)):
     title = df2['title']
     vote_average = float(df2['vote_average'])
     vote_count = int(df2['vote_count'])
-    for (a,b,c,d,e) in iter.zip_longest(split_genre,split_kw,split_p_c1,split_p_c2,split_spoken1,fillvalue='{ }'):
+    for (a,b,d,e) in iter.zip_longest(split_genre,split_kw,split_p_c2,split_spoken1,fillvalue='{ }'):
         if re.findall('}$', a):
             genre = json.loads(a)
         else:
@@ -154,14 +152,6 @@ for i in range(len(df_movies)):
             except:
                 kw = json.dumps([b+'}'])
                 kw = json.loads(kw)
-        if re.findall('}$', c):
-            company = json.loads(c)
-        else:
-            try:
-                company = json.loads(c+'}')
-            except:
-                company = json.dumps([c+'}'])
-                company = json.loads(company)
         if re.findall('}$', d):
             country = json.loads(d)
         else:
@@ -179,7 +169,7 @@ for i in range(len(df_movies)):
                 language2 = json.dumps([e+'}'])
                 language2 = json.loads(language2)
         sql = '''
-        insert into tmdb_movies values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+        insert into tmdb_movies values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
         '''
         cur.execute(sql,(
             budget,
@@ -191,7 +181,6 @@ for i in range(len(df_movies)):
             original_title,
             overview,
             popu,
-            json.dumps(company),
             json.dumps(country),
             release_date,
             revenue,
@@ -203,8 +192,32 @@ for i in range(len(df_movies)):
             vote_average,
             vote_count
         ))
+        total_rows2 += 1
         conn.commit()
-print('Successfully inserted data to tmdb movies table')
+print(f' inserted {total_rows2} rows into tmdb movies table')
+#create production companies table and insert data
+total_rows3 = 0
+cur.execute('drop table if exists production_companies')
+cur.execute('create table production_companies (movie_id integer,production_company jsonb)')
+for i in range(len(df_movies)):
+    df = df_movies.iloc[i]
+    movie_id = int(df['id'])
+    cast = df['production_companies']
+    cast = cast.replace('[','')
+    cast = cast.replace(']','')
+    split_cast = cast.split('},')
+    for a in split_cast:
+        if re.findall('}$', a):
+            company = json.loads(a)
+        else:
+            try:
+                company = json.loads(a+'}')
+            except:
+                pass
+        cur.execute('insert into production_companies values (%s,%s)',(movie_id,json.dumps(company)))
+        total_rows3 += 1
+        conn.commit()
+print(f'Inserted {total_rows2} into production companies table')
 print('Commiting all changes...............')
 conn.commit()
 print('All changes Committed!!!')
