@@ -1,3 +1,3 @@
-<p align="center">
+<h1 align="center">
 # Wrangling-TMDB-movies-dataset
-</p>
+</h1>
