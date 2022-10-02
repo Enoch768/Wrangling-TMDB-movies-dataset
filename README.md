@@ -9,29 +9,31 @@ There are two different datasets, the tmdb credits and the tmdb movies. The tmdb
 <br></br>
 <h5> Data dictionary </h5>
 <ul>
-<list> homepage- URL to the movie </list>
+<list> homepage- URL to the movie. </list>
 
-<list> id - integer movie id which is unique to all movies </list>
+<list> id - integer movie id which is unique to all movies. </list>
 
-<list> riginal_title - text , the original title of a movie </list>
+<list> riginal_title - text , the original title of a movie. </list>
 
-<list> overview - text , movie description </list>
+<list> overview - text , movie description .</list>
 
-<list> popularity - integrt - how popular a movie is </list>
+<list> popularity - integer - how popular a movie is. </list>
 
-production_companies
+<list> production_companies - Companies in charge of yhe movie production in array of objects format. </list>
 
-production_countries
+<list> production_countries - Countries where the movie is produced in areay of objects format as well. </list>
 
-release_date
+<list> release_date - release date of a movie. </list>
 
-spoken_languages
+<list> spoken_languages - array of objects of languages spoken in a movie . </list>
 
-status
+<list> status - text , show if movie is released or not </list>
 
-tagline
+<list> tagline - text </list>
 
-vote_average
+<list> vote_average - float, average of votes </list>
+<list> vote_count - integer, total votes </list>
+</ul>
 <h4> About Project </h4>
 I used python to insert the dataset to postgresql database with the python library use as a client fot postgresql database called <b> psycopg2 </b> . I iterate through all the rows im both dataset and unnested all objects in am array so that esch object will be in a single row amd then inserted them into the created table in jsonb form.
 Normalization was then performed and the erd diagram is <a href = https://github.com/Enoch768/Wrangling-TMDB-movies-dataset/blob/main/tmdb.png> here </a> .
