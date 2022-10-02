@@ -7,6 +7,31 @@ Before anything, i firstly performed  <b> normalization </b> so that there will 
 <h4> About data <h4>
 There are two different datasets, the tmdb credits and the tmdb movies. The tmdb credits dataset contains the cast names , character names and crew data for each movie while tmdb movies dataset contain movies details.
 <br></br>
+<h5> Data dictionary </h5>
+<ul>
+<list> homepage- URL to the movie </list>
+
+<list> id - integer movie id which is unique to all movies </list>
+
+<list> riginal_title - text , the original title of a movie </list>
+
+<list> overview - text , movie description </list>
+
+<list> popularity - integrt - how popular a movie is </list>
+
+production_companies
+
+production_countries
+
+release_date
+
+spoken_languages
+
+status
+
+tagline
+
+vote_average
 <h4> About Project </h4>
 I used python to insert the dataset to postgresql database with the python library use as a client fot postgresql database called <b> psycopg2 </b> . I iterate through all the rows im both dataset and unnested all objects in am array so that esch object will be in a single row amd then inserted them into the created table in jsonb form.
 Normalization was then performed and the erd diagram is <a href = https://github.com/Enoch768/Wrangling-TMDB-movies-dataset/blob/main/tmdb.png> here </a> .
