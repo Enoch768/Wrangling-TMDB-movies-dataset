@@ -5,6 +5,8 @@ select max(release_date) from movies;
 select min(release_date) from movies;
 --The maximum budget
 select max(budget) from movies;
+--the correlation between budget and popularity
+select corr(budget,popularity) from movies;
 --The total number of casts
 select count(*) from cast_names;
 --total number of genres
@@ -132,3 +134,26 @@ join production_countries pc on movies.id = pc.m_id
 join countries c on pc.country_id = c.id 
 where c.iso = 'US'
 group by p_year) as ft;
+--analysis on sony and marvel movies within the 21st century
+with cte1 as (
+select title.name,movies.id,movies.release_date,movies.vote_average ,movies.budget,movies.popularity 
+from movies join title on movies.title_id = title.id),
+cte2 as (
+select companies.name,production_companies.m_id 
+from production_companies join companies on production_companies.company_id = companies.id)
+select * from cte1
+join cte2 on cte1.id = cte2.m_id
+where lower(cte2.name) like '%marvel%' or lower(cte2.name) like '%sony pictures%'
+and release_date >= '2001-01-01';
+--companies that are no more producing in this 21st century
+select * from (select title.name as title,movies.budget,
+movies.popularity,movies.release_date , production_companies.company_id 
+from  movies 
+join title on movies.title_id = title.id
+left join production_companies on production_companies.m_id = movies.id) as ft
+join companies on companies.id = ft.company_id
+where companies.name not in (select companies.name from (
+select release_date,company_id from movies left join production_companies on 
+production_companies.m_id = movies.id) as ft3 
+join companies on ft3.company_id = companies.id where release_date >= '2001-01-01')
+order by release_date desc;
