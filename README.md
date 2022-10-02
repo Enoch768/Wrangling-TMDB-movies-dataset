@@ -39,10 +39,11 @@ There are two different datasets, the tmdb credits and the tmdb movies. The tmdb
 <ul>
 <list> Crew - Array of objects that contain crew that partake in the production of a movie, their gender, their department.</list>
 
+
 <list> movie_id - integer references
 id on tmdb movie dataset . </list>
 
-<list> cast - array of objects that contain names of casts im a movie and the role they played. </list>
+<list> cast - array of objects that contain names of casts in a movie and the role they played. </list>
 </ul>
 
 <h4> About Project </h4>
